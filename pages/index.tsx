@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import DropDown, { VibeType } from "../components/DropDown";
 import Footer from "../components/Footer";
@@ -9,11 +9,31 @@ import Github from "../components/GitHub";
 import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 
+function parseResponse(
+  response: string
+): { question: string; answer: string }[] {
+  const array: { question: string; answer: string }[] = [];
+
+  const lines = response.split("\n");
+
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    const nextLine = lines[index + 1];
+    if (line.startsWith("Q:")) {
+      array.push({
+        question: line,
+        answer: nextLine,
+      });
+    }
+  }
+  return array;
+}
+
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [bio, setBio] = useState("");
   const [vibe, setVibe] = useState<VibeType>("Professional");
-  const [generatedBios, setGeneratedBios] = useState<String>("");
+  const [generatedBios, setGeneratedBios] = useState<string>("");
 
   const bioRef = useRef<null | HTMLDivElement>(null);
 
@@ -23,14 +43,7 @@ const Home: NextPage = () => {
     }
   };
 
-  const prompt = `Generate 2 ${vibe} twitter biographies with no hashtags and clearly labeled "1." and "2.". ${
-    vibe === "Funny"
-      ? "Make sure there is a joke in there and it's a little ridiculous."
-      : null
-  }
-      Make sure each generated biography is less than 160 characters, has short sentences that are found in Twitter bios, and base them on this context: ${bio}${
-    bio.slice(-1) === "." ? "" : "."
-  }`;
+  const prompt = `Generate 10 difficult quiz questions on the topic of ${bio}. Clearly label each question with "Q:" and each answer with "A:".`;
 
   const generateBio = async (e: any) => {
     e.preventDefault();
@@ -161,25 +174,22 @@ const Home: NextPage = () => {
                 </h2>
               </div>
               <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
-                {generatedBios
-                  .substring(generatedBios.indexOf("1") + 3)
-                  .split("2.")
-                  .map((generatedBio) => {
-                    return (
-                      <div
-                        className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
-                        onClick={() => {
-                          navigator.clipboard.writeText(generatedBio);
-                          toast("Bio copied to clipboard", {
-                            icon: "✂️",
-                          });
-                        }}
-                        key={generatedBio}
-                      >
-                        <p>{generatedBio}</p>
-                      </div>
-                    );
-                  })}
+                {parseResponse(generatedBios).map((generatedBio) => {
+                  return (
+                    <div
+                      className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
+                      onClick={() => {
+                        toast("Bio copied to clipboard", {
+                          icon: "✂️",
+                        });
+                      }}
+                      key={generatedBio.question}
+                    >
+                      <p>{generatedBio.question}</p>
+                      <p>{generatedBio.answer}</p>
+                    </div>
+                  );
+                })}
               </div>
             </>
           )}
