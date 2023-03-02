@@ -176,18 +176,19 @@ const Home: NextPage = () => {
               <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
                 {parseResponse(generatedBios).map((generatedBio) => {
                   return (
-                    <div
+                    <label
                       className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
-                      onClick={() => {
-                        toast("Bio copied to clipboard", {
-                          icon: "✂️",
-                        });
-                      }}
                       key={generatedBio.question}
                     >
+                      <input type="checkbox" className="peer sr-only" />
                       <p>{generatedBio.question}</p>
-                      <p>{generatedBio.answer}</p>
-                    </div>
+                      <p className="hidden peer-checked:block">
+                        {generatedBio.answer}
+                      </p>
+                      <p className="bg-neutral-500 text-white peer-checked:hidden">
+                        Reveal
+                      </p>
+                    </label>
                   );
                 })}
               </div>
