@@ -122,7 +122,7 @@ const Home: NextPage = () => {
             type="text"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black mt-5"
             placeholder={"e.g. 80s Movies"}
           />
 
@@ -164,7 +164,7 @@ const Home: NextPage = () => {
                 {parseResponse(generatedBios).map((generatedBio) => {
                   return (
                     <label
-                      className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
+                      className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border w-full"
                       key={generatedBio.question}
                     >
                       <input type="checkbox" className="peer sr-only" />
@@ -172,8 +172,10 @@ const Home: NextPage = () => {
                       <p className="hidden peer-checked:block">
                         {generatedBio.answer}
                       </p>
-                      <p className="bg-neutral-500 text-white peer-checked:hidden">
-                        Reveal
+                      <p className=" peer-checked:hidden">
+                        <span className="bg-neutral-500 text-white px-16 py-1">
+                          Reveal
+                        </span>
                       </p>
                     </label>
                   );
